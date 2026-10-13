@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Cloudflare wrangler local state
+.wrangler/
+
+# Agent tool state
+.claude/
+.gitnexus/
+.agents/
+.plans/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,63 @@
+compatibility_date = "2025-03-01"
+name = "cf-agent"
+main = "src/index.ts"
+
+# ───────── Bindings (Cloudflare Free Tier) ─────────
+
+# KV namespace for config + cache
+[[kv_namespaces]]
+binding = "CONFIG"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# R2 bucket for file storage
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "cf-agent-files"
+
+# D1 database for conversation history
+[[d1_databases]]
+binding = "DB"
+database_name = "cf-agent-db"
+database_id = "YOUR_D1_DATABASE_ID"
+
+# AI binding (Workers AI — free 10K neurons/day)
+[ai]
+binding = "AI"
+
+# Vectorize for RAG
+# NOTE: Create index with: wrangler vectorize create cf-agent-rag --dimensions 768 --metric cosine
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "cf-agent-rag"
+
+# ───────── Durable Objects (Agent State) ─────────
+
+[[durable_objects.bindings]]
+name = "AGENT"
+class_name = "AgentDO"
+
+[[migrations]]
+new_classes = ["AgentDO"]
+tag = "v1"
+
+# ───────── Cron Triggers (proactive agent) ─────────
+
+[triggers]
+crons = [
+  "0 * * * *",      # hourly health check
+  "0 9 * * 1",      # weekly Monday 9am digest
+  "*/30 * * * *"    # every 30min: check notifications
+]
+
+# ───────── Observability ─────────
+
+[observability]
+enabled = true
+
+# ───────── Vars (non-secret) ─────────
+
+[vars]
+AGENT_NAME = "Nahan"
+VERSION = "1.0.0"
+DEFAULT_LLM = "groq"
+FALLBACK_LLM = "gemini"
